@@ -1,0 +1,23 @@
+.Modal {
+  &__inner {
+    align-items: center;
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  &__contents {
+    background: #fcfcfc;
+    border-radius: 16px;
+    padding: 1rem;
+    width: 80vw;
+    max-width: 1240px;
+  }
+  &__background {
+
+  }
+}

@@ -1,0 +1,21 @@
+.Masonry {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(160px,1fr));
+  grid-auto-rows: 0;
+  &__item {
+    background: url("/star.jpg");
+    cursor: pointer;
+    overflow: hidden;
+    img {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+  @media(min-width: 567px) {
+    grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+  }
+  @media(min-width: 1025px) {
+    grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+  }
+}
