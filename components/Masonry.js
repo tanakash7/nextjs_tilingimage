@@ -4,13 +4,13 @@
 
 ***********************************************************************/
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { memo, useEffect, useRef, useState } from "react"
 import ReactDOM from "react-dom"
 import { Modal } from "./Modal"
 import styles from "../styles/Masonry.module.scss"
 
 
-export const Masonry = ({photos}) => {
+const Masonry = ({photos, status}) => {
   const [modal, setModal] = useState(false)
   const [imgInfo, setImgInfo] = useState(null)
   const itemsRef = useRef([])
@@ -23,10 +23,23 @@ export const Masonry = ({photos}) => {
   },[])
   useEffect(()=>{
     itemsRef.current = itemsRef.current.slice(0, photos.length)
-  },[photos.length])
+  },[photos])
+
   useEffect(()=>{
-    resizeAllMasonryItems()
-  },[itemsRef])
+    if(status==="loading") {
+      itemsRef.current.map((ref, i) => {  
+        ref.classList.remove("-loaded")
+      })
+    } else {
+      setTimeout(()=>{
+        itemsRef.current.map((ref, i) => {
+          ref.style.transitionDelay = `${0.1*i}s`
+          ref.classList.add("-loaded")
+        })
+      },400)
+    }
+  },[status])
+  
   useEffect(()=>{
     if(modal) {
       const parent = document.getElementById("Modal")
@@ -34,7 +47,8 @@ export const Masonry = ({photos}) => {
     }
   },[modal])
 
-  const resizeMasonryItem = item => {
+  const resizeMasonryItem = (item) => {
+    if(!masonryRef.current) return null
     const grid = masonryRef.current
     const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-row-gap"))
     const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-auto-rows"))
@@ -43,6 +57,7 @@ export const Masonry = ({photos}) => {
   }
   const resizeAllMasonryItems = () => {
     const allItems = itemsRef.current;
+    if(allItems.length===0) { return null }
     for(var i=0;i<allItems.length;i++){
       resizeMasonryItem(allItems[i]);
     }
@@ -56,6 +71,10 @@ export const Masonry = ({photos}) => {
     setModal(false)
   }
 
+  const handleImageLoading = (e) => {
+    const target = e.currentTarget.parentNode
+    resizeMasonryItem(target)
+  }
   const photo = photos.map((photo,i)=>{
     return (
       <div
@@ -65,14 +84,35 @@ export const Masonry = ({photos}) => {
         data-id={photo.id}
         onClick={handleClick}
       >
-        <img src={photo.urls.small} alt={photo.links.self}/>
+        <img
+          src={photo.urls.small}
+          alt={photo.links.self}
+          onLoad={handleImageLoading}
+        />
       </div>
     )
   })
+  const showSearchResult = (() => {
+    if(status==="failed"||photos.length===0) {
+      const errorText = status==="failed" ? "request overed limit(50 per hour)" : "try using other words"
+      return (
+        <div className={styles.Masonry__failedBox}>
+          <div className={styles.Masonry__faildeBoxText}>{errorText}</div>
+        </div>
+        )
+    }
+    return (
+      <div className={styles.Masonry} ref={masonryRef}>
+       { photo }
+      </div>
+    )
+  })()
   return (
-    <div className={styles.Masonry} ref={masonryRef}>
-      {photo}
-      {modal&&<Modal targetId={imgInfo} photos={photos} handleClick={offModal}/>}
+    <div className={styles.Masonry__wrapper}>
+      { showSearchResult }
+      { modal&&<Modal targetId={imgInfo} photos={photos} handleClick={offModal}/> }
     </div>
   )
 }
+
+export default memo(Masonry)
