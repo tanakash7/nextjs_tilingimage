@@ -12,7 +12,7 @@
     overflow: hidden;
     opacity: 0;
     transform: translateY(180px);
-    transition: opacity 1s, transform 1s;
+    transition: opacity .6s, transform .6s;
     img {
       width: 100%;
       max-width: 100%;
@@ -20,7 +20,7 @@
     &:global(.-loaded) {
       opacity: 1;
       transform: translateY(0);
-      transition: opacity 1s, transform 1s;
+      transition: opacity .6s, transform .6s;
     }
   }
   &__failedBox {

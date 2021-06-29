@@ -70,6 +70,9 @@ const Home = ({ data, heroPhoto }) => {
   })()
   return (
     <>
+      <Head>
+        <meta name="robots" content="noindex, nofollow"/>
+      </Head>
       <div className={styles.Home__container}>
         <Hero
           handleChange={handleChange}
