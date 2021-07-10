@@ -40,7 +40,7 @@ const Masonry = ({photos, status, type}) => {
             ref.style.transitionDelay = `${0.1*i}s`
             ref.classList.add("-loaded")
           })
-        }, 400)
+        }, 600)
     }
   },[status,type])
   
