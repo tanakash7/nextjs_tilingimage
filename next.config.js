@@ -1,6 +1,9 @@
 const isProd = process.env.NODE_ENV === "production"
 
 module.exports = {
+  images: {
+    domains: ['images.unsplash.com']
+  },
   webpack(config, { buildId, dev, isServer, defaultLoaders, webpack }) {
     if(isProd) {
       config.module.rules[2].oneOf.forEach((moduleLoader, i) => {

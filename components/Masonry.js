@@ -10,7 +10,7 @@ import { Modal } from "./Modal"
 import styles from "../styles/Masonry.module.scss"
 
 
-const Masonry = ({photos, status}) => {
+const Masonry = ({photos, status, type}) => {
   const [modal, setModal] = useState(false)
   const [imgInfo, setImgInfo] = useState(null)
   const itemsRef = useRef([])
@@ -23,22 +23,26 @@ const Masonry = ({photos, status}) => {
   },[])
   useEffect(()=>{
     itemsRef.current = itemsRef.current.slice(0, photos.length)
+    if(!itemsRef.current) {return null}
+    itemsRef.current.map((ref, i) => {  
+      ref.classList.remove("-loaded")
+    })
   },[photos])
-
   useEffect(()=>{
-    if(status==="loading") {
+    if(status==="loading"&&type==="new") {
       itemsRef.current.map((ref, i) => {  
         ref.classList.remove("-loaded")
       })
     } else {
-      setTimeout(()=>{
-        itemsRef.current.map((ref, i) => {
-          ref.style.transitionDelay = `${0.1*i}s`
-          ref.classList.add("-loaded")
-        })
-      },400)
+        if(!itemsRef.current) {return null}
+        setTimeout(()=>{
+          itemsRef.current.map((ref, i) => {
+            ref.style.transitionDelay = `${0.1*i}s`
+            ref.classList.add("-loaded")
+          })
+        }, 400)
     }
-  },[status])
+  },[status,type])
   
   useEffect(()=>{
     if(modal) {
@@ -52,7 +56,7 @@ const Masonry = ({photos, status}) => {
     const grid = masonryRef.current
     const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-row-gap"))
     const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-auto-rows"))
-    const rowSpan = Math.ceil(item.firstChild.getBoundingClientRect().height/(rowHeight+rowGap))
+    const rowSpan = Math.ceil(item.lastChild.getBoundingClientRect().height/(rowHeight+rowGap))
     item.style.gridRowEnd = `span ${rowSpan}`
   }
   const resizeAllMasonryItems = () => {
@@ -64,7 +68,7 @@ const Masonry = ({photos, status}) => {
   }
   const handleClick = e => {
     setModal(true)
-    setImgInfo(e.target.parentNode.dataset.id)
+    setImgInfo(e.currentTarget.dataset.id)
   }
 
   const offModal = (e) =>{
@@ -75,7 +79,7 @@ const Masonry = ({photos, status}) => {
     const target = e.currentTarget.parentNode
     resizeMasonryItem(target)
   }
-  const photo = photos.map((photo,i)=>{
+  const photoData = photos.map((photo,i)=>{
     return (
       <div
         key={i}
@@ -84,6 +88,12 @@ const Masonry = ({photos, status}) => {
         data-id={photo.id}
         onClick={handleClick}
       >
+        <div className={styles.Masonry__itemInfo}>
+          <div>
+            photo by {photo.user.username} <br />
+            downloads: {photo.downloads}
+          </div>
+        </div>
         <img
           src={photo.urls.small}
           alt={photo.links.self}
@@ -94,7 +104,13 @@ const Masonry = ({photos, status}) => {
   })
   const showSearchResult = (() => {
     if(status==="failed"||photos.length===0) {
-      const errorText = status==="failed" ? "request overed limit(50 per hour)" : "try using other words"
+      const errorText = (()=>{
+        if(status==="failed"||status==="idle"&&photos.length===0) {
+          return "request overed limit(50 per hour)"
+        } else {
+          return "try using other words"
+        }
+      })()
       return (
         <div className={styles.Masonry__failedBox}>
           <div className={styles.Masonry__faildeBoxText}>{errorText}</div>
@@ -103,7 +119,7 @@ const Masonry = ({photos, status}) => {
     }
     return (
       <div className={styles.Masonry} ref={masonryRef}>
-       { photo }
+       { photoData }
       </div>
     )
   })()
