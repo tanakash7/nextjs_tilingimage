@@ -91,7 +91,7 @@ const Masonry = ({photos, status, type}) => {
         <div className={styles.Masonry__itemInfo}>
           <div>
             photo by {photo.user.username} <br />
-            downloads: {photo.downloads}
+            {photo.downloads&&`downloads: ${photo.download}`}
           </div>
         </div>
         <img
