@@ -17,7 +17,6 @@
     box-shadow: 4px 4px 10px rgb(55,55,55, .4);
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
     justify-content: flex-start;
     overflow: scroll;
     padding: 2.4rem;
@@ -25,7 +24,10 @@
     width: auto;
     height: 100%;
     max-width: 1240px;
-    max-height: 720px;
+    max-height: 80vh;
+    @media(min-width: 1025px) {
+      height: auto;
+    }
   }
   &__background {
 
@@ -33,7 +35,7 @@
   &__img {
     text-align: center;
     width: 100%;
-    height: 80%;
+    max-height: 80%;
     margin-bottom: 2.4rem;
     img {
       max-width: 100%;
@@ -46,6 +48,9 @@
     font-size: 2rem;
     justify-content: center;
     width: 100%;
+    @media (max-width: 320px) {
+      font-size: 1.6rem;
+    }
   }
   &__downloadButton {
     background: #000;
