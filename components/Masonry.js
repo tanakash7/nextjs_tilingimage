@@ -10,59 +10,59 @@ import { Modal } from "./Modal"
 import styles from "../styles/Masonry.module.scss"
 
 
-const Masonry = ({photos, status, type}) => {
+const Masonry = ({ photos, status, type }) => {
   const [modal, setModal] = useState(false)
   const [imgInfo, setImgInfo] = useState(null)
   const itemsRef = useRef([])
   const masonryRef = useRef(null)
-  useEffect(()=>{
+  useEffect(() => {
     const masonryEvents = ["load", "resize"]
-    masonryEvents.forEach( event =>  {
+    masonryEvents.forEach(event => {
       window.addEventListener(event, resizeAllMasonryItems);
-    } );
-  },[])
-  useEffect(()=>{
+    });
+  }, [])
+  useEffect(() => {
     itemsRef.current = itemsRef.current.slice(0, photos.length)
-    if(!itemsRef.current) {return null}
-    itemsRef.current.map((ref, i) => {  
+    if (!itemsRef.current) { return null }
+    itemsRef.current.map((ref, i) => {
       ref.classList.remove("-loaded")
     })
-  },[photos])
-  useEffect(()=>{
-    if(status==="loading"&&type==="new") {
-      itemsRef.current.map((ref, i) => {  
+  }, [photos])
+  useEffect(() => {
+    if (status === "loading" && type === "new") {
+      itemsRef.current.map((ref, i) => {
         ref.classList.remove("-loaded")
       })
     } else {
-        if(!itemsRef.current) {return null}
-        setTimeout(()=>{
-          itemsRef.current.map((ref, i) => {
-            ref.style.transitionDelay = `${0.1*i}s`
-            ref.classList.add("-loaded")
-          })
-        }, 600)
+      if (!itemsRef.current) { return null }
+      setTimeout(() => {
+        itemsRef.current.map((ref, i) => {
+          ref.style.transitionDelay = `${0.1 * i}s`
+          ref.classList.add("-loaded")
+        })
+      }, 600)
     }
-  },[status,type])
-  
-  useEffect(()=>{
-    if(modal) {
+  }, [status, type])
+
+  useEffect(() => {
+    if (modal) {
       const parent = document.getElementById("Modal")
       return ReactDOM.createPortal(<Modal />, parent)
     }
-  },[modal])
+  }, [modal])
 
   const resizeMasonryItem = (item) => {
-    if(!masonryRef.current) return null
+    if (!masonryRef.current) return null
     const grid = masonryRef.current
     const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-row-gap"))
     const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue("grid-auto-rows"))
-    const rowSpan = Math.ceil(item.lastChild.getBoundingClientRect().height/(rowHeight+rowGap))
+    const rowSpan = Math.ceil(item.lastChild.getBoundingClientRect().height / (rowHeight + rowGap))
     item.style.gridRowEnd = `span ${rowSpan}`
   }
   const resizeAllMasonryItems = () => {
     const allItems = itemsRef.current;
-    if(allItems.length===0) { return null }
-    for(var i=0;i<allItems.length;i++){
+    if (allItems.length === 0) { return null }
+    for (var i = 0; i < allItems.length; i++) {
       resizeMasonryItem(allItems[i]);
     }
   }
@@ -71,7 +71,7 @@ const Masonry = ({photos, status, type}) => {
     setImgInfo(e.currentTarget.dataset.id)
   }
 
-  const offModal = (e) =>{
+  const offModal = (e) => {
     setModal(false)
   }
 
@@ -79,7 +79,7 @@ const Masonry = ({photos, status, type}) => {
     const target = e.currentTarget.parentNode
     resizeMasonryItem(target)
   }
-  const photoData = photos.map((photo,i)=>{
+  const photoData = photos.map((photo, i) => {
     return (
       <div
         key={i}
@@ -91,7 +91,7 @@ const Masonry = ({photos, status, type}) => {
         <div className={styles.Masonry__itemInfo}>
           <div>
             photo by {photo.user.username} <br />
-            {photo.downloads&&`downloads: ${photo.download}`}
+            {photo.downloads && `downloads: ${photo.downloads}`}
           </div>
         </div>
         <img
@@ -103,9 +103,9 @@ const Masonry = ({photos, status, type}) => {
     )
   })
   const showSearchResult = (() => {
-    if(status==="failed"||photos.length===0) {
-      const errorText = (()=>{
-        if(status==="failed"||status==="idle"&&photos.length===0) {
+    if (status === "failed" || photos.length === 0) {
+      const errorText = (() => {
+        if (status === "failed" || status === "idle" && photos.length === 0) {
           return "request overed limit(50 per hour)"
         } else {
           return "try using other words"
@@ -115,18 +115,18 @@ const Masonry = ({photos, status, type}) => {
         <div className={styles.Masonry__failedBox}>
           <div className={styles.Masonry__faildeBoxText}>{errorText}</div>
         </div>
-        )
+      )
     }
     return (
       <div className={styles.Masonry} ref={masonryRef}>
-       { photoData }
+        {photoData}
       </div>
     )
   })()
   return (
     <div className={styles.Masonry__wrapper}>
-      { showSearchResult }
-      { modal&&<Modal targetId={imgInfo} photos={photos} handleClick={offModal}/> }
+      {showSearchResult}
+      {modal && <Modal targetId={imgInfo} photos={photos} handleClick={offModal} />}
     </div>
   )
 }
