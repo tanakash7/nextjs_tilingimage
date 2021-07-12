@@ -1,12 +1,21 @@
-import { memo, useState } from "react"
+import { memo, useRef, useState } from "react"
 import styles from "../styles/Hero.module.scss"
+import Image from "next/image"
 
 const Hero = ({handleChange, handleSubmit, query, hero}) => {
-  const style = {
-    background: `url(${hero[0].urls.raw}) no-repeat center/cover`
-  }
   return (
-    <div className={styles.Hero} style={style}>
+    <div className={styles.Hero}>
+      <div className={styles.Hero__background}>
+        <Image
+          src={hero?hero[0].urls.raw:"/star.jpg"}
+          alt="hero image"
+          // width={1920}
+          // height={1080}
+          layout="fill"
+          objectFit={"cover"}
+          objectPosition={"50% 50%"}
+        />
+      </div>
       <form className={styles.Hero__searchArea} onSubmit={handleSubmit}>
         <button type="submit" className={styles.Hero__submitButton}>
             <i className="fas fa-search"></i>
