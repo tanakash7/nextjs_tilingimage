@@ -9,7 +9,7 @@ import { fetchAsyncPhotos, fetchAsyncMorePhotos, selectPhotos } from '../store/r
 
 import { config, dom, library } from '@fortawesome/fontawesome-svg-core';
 import { fas, faExternalLinkAlt, faSearch } from "@fortawesome/free-solid-svg-icons"
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 library.add(fas, faExternalLinkAlt, faSearch)
 
 dom.watch()
@@ -19,17 +19,17 @@ export const getServerSideProps = async () => {
     const heroPhoto = await unsplashInstance("/photos/random?count=1&query=landscape&w=1920&h=1080").then(res => res.data)
     const data = await unsplashInstance("/photos/random?count=30").then(res => res.data)
     return { props: { data, heroPhoto } }
-  } catch(error) {
+  } catch (error) {
     const data = []
     const heroPhoto = null
-    return {props: {data, heroPhoto}}
+    return { props: { data, heroPhoto } }
   }
 }
 
 const Home = ({ data, heroPhoto }) => {
   const dispatch = useDispatch()
   const searchedPhotos = useSelector(selectPhotos)
-  const initialObj = {"page": 1, "data": data}
+  const initialObj = { "page": 1, "data": data }
   const [photos, setPhotos] = useState([initialObj])
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
@@ -39,69 +39,69 @@ const Home = ({ data, heroPhoto }) => {
   const handleChange = (e) => {
     setQuery(e.target.value)
   }
-  
-  useEffect(()=>{
-    if(searchedPhotos.photos.length>0) {
+
+  useEffect(() => {
+    if (searchedPhotos.photos.length > 0) {
       setPhotos(searchedPhotos.photos)
       setTotalPages(searchedPhotos.total_pages)
       setStatus(searchedPhotos.status)
     }
-  },[dispatch, searchedPhotos])
+  }, [dispatch, searchedPhotos])
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if(!query) { return null }
+    if (!query) { return null }
     await dispatch(fetchAsyncPhotos(query))
     setPage(initializePageCount)
   }
 
-  const addMorePhotos = async(e) => {
+  const addMorePhotos = async (e) => {
     e.preventDefault()
     const newPage = +e.currentTarget.dataset.page
     setPage(newPage)
-    await dispatch(fetchAsyncMorePhotos({query, newPage}))
+    await dispatch(fetchAsyncMorePhotos({ query, newPage }))
   }
   const button = (() => {
-      if(status === "idle" || !query) {return null}
-      const buttonList = []
-      const handleClick = (e) => {
-        addMorePhotos(e)
-        window.scrollTo({top:0,behavior:"smooth"})
+    if (status === "idle" || !query) { return null }
+    const buttonList = []
+    const handleClick = (e) => {
+      addMorePhotos(e)
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+    let pageList = [page]
+    for (let i = page - 1; i > 0; i--) {
+      if (pageList.length < 9) {
+        pageList = [i, ...pageList]
       }
-      let pageList = [page]
-      for(let i=page-1; i>0; i--) {
-        if(pageList.length<9) {
-          pageList = [i, ...pageList]
-        }
-      }
-      for(let i=page+1; i<=totalPages&&pageList.length<10; i++) {
-        pageList = [...pageList, i]
-      }
-      pageList.map((pageNum, i)=>{
-          const currentTarget = pageNum===page? "--current": ""
-          buttonList.push (
-            <li
-              key={i}
-              className={`${styles.Home__pageNationItem} ${currentTarget}`}
-              data-page={pageNum}
-              onClick={handleClick}
-            >{pageNum}</li>
-          )
-        })
-
-      return (
-        <div className={styles.Home__wrapper}>
-          <ul className={styles.Home__pageNation}>
-            {buttonList}
-          </ul>
-        </div>
+    }
+    for (let i = page + 1; i <= totalPages && pageList.length < 10; i++) {
+      pageList = [...pageList, i]
+    }
+    pageList.map((pageNum, i) => {
+      const currentTarget = pageNum === page ? "--current" : ""
+      buttonList.push(
+        <li
+          key={i}
+          className={`${styles.Home__pageNationItem} ${currentTarget}`}
+          data-page={pageNum}
+          onClick={handleClick}
+        >{pageNum}</li>
       )
+    })
+
+    return (
+      <div className={styles.Home__wrapper}>
+        <ul className={styles.Home__pageNation}>
+          {buttonList}
+        </ul>
+      </div>
+    )
   })()
-  const targetData = photos.filter(val=>(val.page === page))
+  const targetData = photos.filter(val => (val.page === page))
   return (
     <>
       <Head>
-        <meta name="robots" content="noindex, nofollow"/>
+        <meta name="robots" content="noindex, nofollow" />
       </Head>
       <div className={styles.Home__container}>
         <Hero
@@ -109,8 +109,8 @@ const Home = ({ data, heroPhoto }) => {
           handleSubmit={handleSubmit}
           query={query} hero={heroPhoto}
         />
-        {targetData.length>0&&
-            <Masonry
+        {targetData.length > 0 &&
+          <Masonry
             photos={targetData[0].data}
             status={status}
             page={page}
@@ -118,7 +118,7 @@ const Home = ({ data, heroPhoto }) => {
             totalPages={totalPages}
           />
         }
-        { button }
+        {button}
       </div>
       <div id="Modal"></div>
       <Footer />
