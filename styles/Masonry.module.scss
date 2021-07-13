@@ -15,7 +15,7 @@
     overflow: hidden;
     opacity: 0;
     transform: translateX(180px);
-    transition: opacity .6s, transform .6s;
+    transition: opacity .6s ease-out, transform .6s ease-out;
     position: relative;
     img {
       width: 100%;
@@ -24,7 +24,7 @@
     &:global(.-loaded) {
       opacity: 1;
       transform: translateX(0);
-      transition: opacity .6s, transform .6s;
+      transition: opacity .6s ease-out, transform .6s ease-out;
     }
   }
   &__itemInfo {

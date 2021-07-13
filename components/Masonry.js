@@ -23,16 +23,13 @@ const Masonry = ({ photos, status, type }) => {
   }, [])
   useEffect(() => {
     itemsRef.current = itemsRef.current.slice(0, photos.length)
-    if (!itemsRef.current) { return null }
-    itemsRef.current.map((ref, i) => {
-      ref.classList.remove("-loaded")
-    })
   }, [photos])
   useEffect(() => {
-    if (status === "loading" && type === "new") {
+    if (status === "loading") {
       itemsRef.current.map((ref, i) => {
         ref.classList.remove("-loaded")
       })
+      console.log("remove load したよ")
     } else {
       if (!itemsRef.current) { return null }
       setTimeout(() => {
