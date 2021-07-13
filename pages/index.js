@@ -17,7 +17,7 @@ dom.watch()
 export const getServerSideProps = async () => {
   try {
     const heroPhoto = await unsplashInstance("/photos/random?count=1&query=landscape&w=1920&h=1080").then(res => res.data)
-    const data = await unsplashInstance("/photos/random?count=30").then(res => res.data)
+    const data = await unsplashInstance("/photos/random?count=20").then(res => res.data)
     return { props: { data, heroPhoto } }
   } catch (error) {
     const data = []
