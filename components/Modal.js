@@ -13,10 +13,6 @@ export const Modal = ({ targetId, photos, handleClick }) => {
   const stopPropagation = e => {
     e.stopPropagation()
   }
-  const photoURL = (() => {
-    if (!photo) return null
-    return window.innerWidth >= 768 ? photo.urls.regular : photo.urls.small
-  })()
   const element = (
     <>
       <div className={styles.Modal__background}></div>
@@ -25,7 +21,7 @@ export const Modal = ({ targetId, photos, handleClick }) => {
           {photo && (
             <>
               <div className={styles.Modal__img}>
-                <img src={photoURL} alt={photoURL} />
+                <img src={photo.urls.small} alt={photo.urls.small} />
               </div>
               <div className={styles.Modal__desc}>{photo.description}</div>
               <div className={styles.Modal__download}>
