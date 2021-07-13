@@ -17,5 +17,29 @@
     display: flex;
     justify-content: center;
     margin: 4rem 0;
+    overflow: hidden;
+  }
+  &__pageNation {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 1.6rem;
+    justify-content: center;
+    list-style: none;
+    padding-inline-start: 0;
+  }
+  &__pageNationItem {
+    background: #000;
+    border: 1px solid #000;
+    cursor: pointer;
+    color: #fff;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    &:not(:first-of-type) {
+      margin-left: 1rem;
+    }
+    &:global(.--current) {
+      background: #fff;
+      color: #000;
+    }
   }
 }
